@@ -8,7 +8,13 @@ typedef NS_ENUM(NSInteger, JSScriptType) {
     kJSScriptTypeModule,
 };
 
-@interface JSScript : NSObject
+// @interface JSScript : NSObject
+
+// + (nullable instancetype)scriptOfType:(JSScriptType)type withSource:(NSString * _Nonnull)source andSourceURL:(NSURL * _Nonnull)sourceURL andBytecodeCache:(nullable NSURL *)cachePath inVirtualMachine:(JSVirtualMachine * _Nonnull)vm error:(out NSError* _Nullable * _Nullable)error;
+
+// @end
+
+@interface JSCExtScript : NSObject
 
 + (nullable instancetype)scriptOfType:(JSScriptType)type withSource:(NSString * _Nonnull)source andSourceURL:(NSURL * _Nonnull)sourceURL andBytecodeCache:(nullable NSURL *)cachePath inVirtualMachine:(JSVirtualMachine * _Nonnull)vm error:(out NSError* _Nullable * _Nullable)error;
 
@@ -32,6 +38,6 @@ typedef NS_ENUM(NSInteger, JSScriptType) {
 
 @property (nonatomic, weak) id <JSModuleLoaderDelegate> moduleLoaderDelegate;
 
-- (JSValue *)evaluateJSScript:(JSScript *)script;
+- (JSValue *)evaluateJSScript:(id)script;
 
 @end

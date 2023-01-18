@@ -25,7 +25,7 @@ class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
     func context(_ context: JSContext!, fetchModuleForIdentifier identifier: JSValue!, withResolveHandler resolve: JSValue!, andRejectHandler reject: JSValue!) {
         RunLoop.main.perform {
             print("fetchModuleForIdentifier: \(identifier!)")
-            let script = try! JSScript(
+            let script = try! JSCExtScript(
                 of: .module,
                 withSource: identifier.toString() == "file:///hello.js" ? "print('hello'); export default 'exported';" : SOURCE,
                 andSourceURL: URL(string: identifier.toString())!,
@@ -101,7 +101,7 @@ final class JavaScriptCoreExtTests: XCTestCase {
         mod.invokeMethod("then", withArguments: [
             MyModuleLoader.test,
             MyModuleLoader.test
-        ])!
+        ])
         
         let out = RunLoop.main.run(mode: .default, before: .distantPast)
 
