@@ -54,7 +54,7 @@ final class JavaScriptCoreExtTests: XCTestCase {
         let context = JSContext(virtualMachine: vm)!
         let loader = MyModuleLoader()
         
-        context.moduleLoaderDelegate = loader
+        context.setModuleLoaderDelegate(loader)
 
         context.exceptionHandler = { context, value in
             print("JSError: \(value!)")

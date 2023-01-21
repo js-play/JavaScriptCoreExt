@@ -46,11 +46,11 @@ public class JSCExtScript {
 }
 
 public extension JSContext {
-    public func setModuleLoaderDelegate(_ value: JSModuleLoaderDelegate) {
+    func setModuleLoaderDelegate(_ value: JSModuleLoaderDelegate) {
         self.perform(Selector("setModuleLoaderDelegate:"), with: value)
     }
     
-    public func evaluateJSScript(_ script: JSCExtScript) -> JSValue {
+    func evaluateJSScript(_ script: JSCExtScript) -> JSValue {
         return self.perform(Selector("evaluateJSScript:"), with: script.inner).takeRetainedValue() as! JSValue
     }
 }
