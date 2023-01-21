@@ -18,12 +18,7 @@ let package = Package(
     targets: [
         .target(
             name: "JavaScriptCoreExt",
-            dependencies: [],
-            publicHeadersPath: "include",
-            cxxSettings: [
-                .headerSearchPath("."),
-                .unsafeFlags(["-std=c++17"]),
-            ]),
+            dependencies: []),
         .testTarget(
             name: "JavaScriptCoreExtTests",
             dependencies: ["JavaScriptCoreExt"])

@@ -25,13 +25,12 @@ class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
         RunLoop.main.perform {
             print("fetchModuleForIdentifier: \(identifier!)")
             let script = try! JSCExtScript(
-                of: .module,
+                ofType: .module,
                 withSource: identifier.toString() == "file:///hello.js" ? "print('hello'); export default 'exported';" : SOURCE,
                 andSourceURL: URL(string: identifier.toString())!,
-                andBytecodeCache: nil,
                 in: context.virtualMachine
             )
-            resolve.call(withArguments: [script])
+            resolve.call(withArguments: [script.inner])
         }
     }
 
