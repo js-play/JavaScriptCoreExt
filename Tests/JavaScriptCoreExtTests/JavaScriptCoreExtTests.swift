@@ -84,7 +84,7 @@ final class JavaScriptCoreExtTests: XCTestCase {
         )
         
         print("evaluate script")
-        let mod = context.evaluateScript("""
+        let _ = context.evaluateScript("""
         import('file:///test.js').then((x) => {
             print('mod then')
             print(x.test)
