@@ -48,6 +48,8 @@ final class JavaScriptCoreExtTests: XCTestCase {
     func testExample() throws {
         let vm = JSVirtualMachine()!
         let context = JSContext(virtualMachine: vm)!
+        
+        print("create module loader")
         let loader = MyModuleLoader()
         
         print("set module loader")
