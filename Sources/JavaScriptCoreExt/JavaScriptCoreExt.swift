@@ -50,7 +50,7 @@ public extension JSContext {
         self.perform(Selector(("setModuleLoaderDelegate:")), with: value)
     }
     
-    func evaluateJSScript(_ script: JSCExtScript) -> JSValue {
-        return self.perform(Selector(("evaluateJSScript:")), with: script.inner).takeRetainedValue() as! JSValue
-    }
+    // func evaluateJSScript(_ script: JSCExtScript) -> JSValue {
+    //     return self.perform(Selector(("evaluateJSScript:")), with: script.inner).takeRetainedValue() as! JSValue
+    // }
 }
