@@ -42,10 +42,6 @@ throw new Error("test error");
     @objc func didEvaluateModule(_ key: URL?) {
         print("didEvaluateModule: \(key!)")
     }
-
-    @objc static func test() {
-        print("debug")
-    }
 }
 
 final class JavaScriptCoreExtTests: XCTestCase {
@@ -54,6 +50,7 @@ final class JavaScriptCoreExtTests: XCTestCase {
         let context = JSContext(virtualMachine: vm)!
         let loader = MyModuleLoader()
         
+        print("set module loader")
         context.setModuleLoaderDelegate(loader)
 
         context.exceptionHandler = { context, value in
@@ -86,10 +83,11 @@ final class JavaScriptCoreExtTests: XCTestCase {
             forKeyedSubscript: "sleep" as NSString
         )
         
+        print("evaluate script")
         let mod = context.evaluateScript("""
         import('file:///test.js').then((x) => {
             print('mod then')
-            print(x.test) // PRINT IN JS ye its for testing
+            print(x.test)
             return x
         }).catch((e) => {
             print('mod catch')
@@ -97,11 +95,7 @@ final class JavaScriptCoreExtTests: XCTestCase {
         })
         """)!
         
-        mod.invokeMethod("then", withArguments: [
-            MyModuleLoader.test,
-            MyModuleLoader.test
-        ])
-        
+        print("run event loop")
         let out = RunLoop.main.run(mode: .default, before: .distantPast)
 
         print("runloop done \(out)")
