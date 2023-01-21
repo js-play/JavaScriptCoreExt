@@ -18,7 +18,7 @@ public class JSCExtScript {
         in vm: JSVirtualMachine
     ) throws {
         let cls = objc_getClass("JSScript")!
-        let sel = Selector("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:")
+        let sel = Selector(("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:"))
         typealias Fn = @convention(c) (Any, Selector, CInt, NSString, NSURL, Any?, Any, UnsafeMutablePointer<NSError?>) -> Any
         let fn = unsafeBitCast(msgSend, to: Fn.self)
         let outError = UnsafeMutablePointer<NSError?>.allocate(capacity: 1)
@@ -47,10 +47,10 @@ public class JSCExtScript {
 
 public extension JSContext {
     func setModuleLoaderDelegate(_ value: JSModuleLoaderDelegate) {
-        self.perform(Selector("setModuleLoaderDelegate:"), with: value)
+        self.perform(Selector(("setModuleLoaderDelegate:")), with: value)
     }
     
     func evaluateJSScript(_ script: JSCExtScript) -> JSValue {
-        return self.perform(Selector("evaluateJSScript:"), with: script.inner).takeRetainedValue() as! JSValue
+        return self.perform(Selector(("evaluateJSScript:")), with: script.inner).takeRetainedValue() as! JSValue
     }
 }
