@@ -39,10 +39,10 @@ public class JSCExtScript {
 }
 
 @objc public protocol JSModuleLoaderDelegate {
-    @objc func context(_ context: JSContext, fetchModuleForIdentifier identifier: JSValue, withResolveHandler resolve: JSValue, andRejectHandler reject: JSValue)
+    @objc func context(_ context: JSContext!, fetchModuleForIdentifier identifier: JSValue!, withResolveHandler resolve: JSValue!, andRejectHandler reject: JSValue!)
     
-    @objc optional func willEvaluateModule(_ key: JSValue)
-    @objc optional func didEvaluateModule(_ key: JSValue)
+    @objc optional func willEvaluateModule(_ key: JSValue!)
+    @objc optional func didEvaluateModule(_ key: JSValue!)
 }
 
 public extension JSContext {

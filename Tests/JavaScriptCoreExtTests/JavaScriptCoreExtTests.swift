@@ -21,8 +21,8 @@ Promise.resolve().then(() => {
 throw new Error("test error");
 """
 
-class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
-    func context(_ context: JSContext!, fetchModuleForIdentifier identifier: JSValue!, withResolveHandler resolve: JSValue!, andRejectHandler reject: JSValue!) {
+@objc class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
+    @objc func context(_ context: JSContext!, fetchModuleForIdentifier identifier: JSValue!, withResolveHandler resolve: JSValue!, andRejectHandler reject: JSValue!) {
         RunLoop.main.perform {
             print("fetchModuleForIdentifier: \(identifier!)")
             let script = try! JSCExtScript(
@@ -35,11 +35,11 @@ class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
         }
     }
 
-    func willEvaluateModule(_ key: URL?) {
+    @objc func willEvaluateModule(_ key: URL?) {
         print("willEvaluateModule: \(key!)")
     }
 
-    func didEvaluateModule(_ key: URL?) {
+    @objc func didEvaluateModule(_ key: URL?) {
         print("didEvaluateModule: \(key!)")
     }
 
