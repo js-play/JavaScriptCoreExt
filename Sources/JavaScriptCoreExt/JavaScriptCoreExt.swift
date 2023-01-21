@@ -1,8 +1,8 @@
 import JavaScriptCore
 import Foundation
 
-let handle = dlopen("libobjc.dylib", RTLD_LAZY)
-let msgSend = dlsym(handle, "objc_msgSend")
+lazy var handle = dlopen("libobjc.dylib", RTLD_LAZY)
+lazy var msgSend = dlsym(handle, "objc_msgSend")
 
 public enum JSScriptType: Int32 {
     case program, module

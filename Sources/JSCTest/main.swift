@@ -20,8 +20,8 @@ Promise.resolve().then(() => {
 throw new Error("test error");
 """
 
-class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
-    func context(_ context: JSContext!, fetchModuleForIdentifier identifier: JSValue!, withResolveHandler resolve: JSValue!, andRejectHandler reject: JSValue!) {
+@objc class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
+    @objc func context(_ context: JSContext!, fetchModuleForIdentifier identifier: JSValue!, withResolveHandler resolve: JSValue!, andRejectHandler reject: JSValue!) {
         RunLoop.main.perform {
             print("fetchModuleForIdentifier: \(identifier!)")
             let script = try! JSCExtScript(
@@ -34,70 +34,61 @@ class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
         }
     }
 
-    func willEvaluateModule(_ key: URL?) {
+    @pbjc func willEvaluateModule(_ key: URL?) {
         print("willEvaluateModule: \(key!)")
     }
 
-    func didEvaluateModule(_ key: URL?) {
+    @objc func didEvaluateModule(_ key: URL?) {
         print("didEvaluateModule: \(key!)")
-    }
-
-    @objc static func test() {
-        print("debug")
     }
 }
 
 let vm = JSVirtualMachine()!
-        let context = JSContext(virtualMachine: vm)!
-        let loader = MyModuleLoader()
+let context = JSContext(virtualMachine: vm)!
+let loader = MyModuleLoader()
         
-        context.setModuleLoaderDelegate(loader)
+context.setModuleLoaderDelegate(loader)
 
-        context.exceptionHandler = { context, value in
-            print("JSError: \(value!)")
-        }
+context.exceptionHandler = { context, value in
+    print("JSError: \(value!)")
+}
 
-        context.setObject(
-            {()->@convention(block) (JSValue)->Void in { print($0) }}(),
-            forKeyedSubscript: "print" as NSString
-        )
+context.setObject(
+    {()->@convention(block) (JSValue)->Void in { print($0) }}(),
+    forKeyedSubscript: "print" as NSString
+)
 
-        context.setObject(
-            {()->@convention(block) (JSValue)->JSValue in { a in
-                return JSValue(
-                    newPromiseIn: JSContext.current()!,
-                    fromExecutor: { resolve, reject in
-                        let ms = a.toInt32()
-                        print("sleep \(ms)ms")
-                        RunLoop.main.perform(
-                            inModes: [.default],
-                            block: {
-                                print("sleep begin")
-                                Thread.sleep(forTimeInterval: TimeInterval(ms) / 1000)
-                                print("sleep done")
-                            }
-                        )
+context.setObject(
+    {()->@convention(block) (JSValue)->JSValue in { a in
+        return JSValue(
+            newPromiseIn: JSContext.current()!,
+            fromExecutor: { resolve, reject in
+                let ms = a.toInt32()
+                print("sleep \(ms)ms")
+                RunLoop.main.perform(
+                    inModes: [.default],
+                    block: {
+                        print("sleep begin")
+                        Thread.sleep(forTimeInterval: TimeInterval(ms) / 1000)
+                        print("sleep done")
                     }
                 )
-            }}(),
-            forKeyedSubscript: "sleep" as NSString
+            }
         )
+    }}(),
+    forKeyedSubscript: "sleep" as NSString
+)
         
-        let mod = context.evaluateScript("""
-        import('file:///test.js').then((x) => {
-            print('mod then')
-            print(x.test) // PRINT IN JS ye its for testing
-            return x
-        }).catch((e) => {
-            print('mod catch')
-            print(e.message)
-        })
-        """)!
+let _ = context.evaluateScript("""
+import('file:///test.js').then((x) => {
+    print('mod then')
+    print(x.test)
+    return x
+}).catch((e) => {
+    print('mod catch')
+    print(e.message)
+})
+""")!
         
-        mod.invokeMethod("then", withArguments: [
-            MyModuleLoader.test,
-            MyModuleLoader.test
-        ])!
-        
-        let out = RunLoop.main.run()
-        print("runloop done \(out)")
+let out = RunLoop.main.run()
+print("runloop done \(out)")

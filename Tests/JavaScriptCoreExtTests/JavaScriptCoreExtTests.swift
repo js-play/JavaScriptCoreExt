@@ -1,5 +1,5 @@
 import XCTest
-import JavaScriptCore
+@testable import JavaScriptCore
 @testable import JavaScriptCoreExt
 
 let SOURCE = """
@@ -46,9 +46,10 @@ throw new Error("test error");
 
 final class JavaScriptCoreExtTests: XCTestCase {
     func testExample() throws {
+        print("make vm")
         let vm = JSVirtualMachine()!
         let context = JSContext(virtualMachine: vm)!
-        
+
         print("create module loader")
         let loader = MyModuleLoader()
         
