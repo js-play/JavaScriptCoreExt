@@ -5,19 +5,20 @@ public enum JSScriptType: Int64 {
     case program, module
 }
 
+let cls = objc_getClass("JSScript")!
+let sel = Selector(("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:"))
+let method = class_getClassMethod((cls as! AnyClass), sel)
+let imp = method_getImplementation(method!)
+typealias Fn = @convention(c) (Any, Selector, Int64, NSString, NSURL, NSURL?, JSVirtualMachine, UnsafeMutablePointer<NSError?>) -> Any?
+let fn = unsafeBitCast(imp, to: Fn.self)
+let outError = UnsafeMutablePointer<NSError?>.allocate(capacity: 1)
+
 public func JSCExtScript(
         of type: JSScriptType,
         withSource source: String,
         andSourceURL url: URL,
         in vm: JSVirtualMachine
 ) throws -> Any {
-    let cls = objc_getClass("JSScript")!
-    let sel = Selector(("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:"))
-    let method = class_getClassMethod((cls as! AnyClass), sel)
-    let imp = method_getImplementation(method!)
-    typealias Fn = @convention(c) (Any, Selector, Int64, NSString, NSURL, NSURL?, JSVirtualMachine, UnsafeMutablePointer<NSError?>) -> Any?
-    let fn = unsafeBitCast(imp, to: Fn.self)
-    let outError = UnsafeMutablePointer<NSError?>.allocate(capacity: 1)
     let result = fn(
         cls,
         sel,
