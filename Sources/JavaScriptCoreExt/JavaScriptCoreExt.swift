@@ -33,7 +33,7 @@ public class JSCExtScript {
             vm,
             outError
         )
-        print("does it work")
+        print("does it work \(inner)")
         if let err = outError.pointee {
             throw err
         }

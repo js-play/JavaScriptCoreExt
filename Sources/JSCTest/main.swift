@@ -22,7 +22,6 @@ throw new Error("test error");
 
 @objc class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
     @objc func context(_ context: JSContext!, fetchModuleForIdentifier identifier: JSValue!, withResolveHandler resolve: JSValue!, andRejectHandler reject: JSValue!) {
-        RunLoop.main.perform {
             print("fetchModuleForIdentifier: \(identifier!)")
             let script = try! JSCExtScript(
                 ofType: .module,
@@ -30,8 +29,9 @@ throw new Error("test error");
                 andSourceURL: URL(string: identifier.toString())!,
                 in: context.virtualMachine
             )
+            print("script: \(script.inner)")
             resolve.call(withArguments: [script.inner])
-        }
+            print("resolved actually")
     }
 
     @objc func willEvaluateModule(_ key: URL?) {
