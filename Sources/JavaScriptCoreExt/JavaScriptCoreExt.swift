@@ -14,7 +14,6 @@ public class JSCExtScript {
         andSourceURL url: URL,
         in vm: JSVirtualMachine
     ) throws {
-        print("huh")
         let cls = objc_getClass("JSScript")!
         let sel = Selector(("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:"))
         let method = class_getClassMethod(cls as! AnyClass, sel)
@@ -38,7 +37,7 @@ public class JSCExtScript {
     }
 }
 
-@objc public protocol JSModuleLoaderDelegate {
+@objc public protocol JSModuleLoaderDelegate: NSObjectProtocol {
     @objc func context(_ context: JSContext!, fetchModuleForIdentifier identifier: JSValue!, withResolveHandler resolve: JSValue!, andRejectHandler reject: JSValue!)
     
     @objc optional func willEvaluateModule(_ key: URL!)
