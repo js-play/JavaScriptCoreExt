@@ -19,6 +19,9 @@ let package = Package(
         .target(
             name: "JavaScriptCoreExt",
             dependencies: []),
+        .executableTarget(
+            name: "JSCTest",
+            dependencies: ["JavaScriptCoreExt"]),
         .testTarget(
             name: "JavaScriptCoreExtTests",
             dependencies: ["JavaScriptCoreExt"])
