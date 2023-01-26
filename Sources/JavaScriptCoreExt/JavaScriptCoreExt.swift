@@ -38,6 +38,10 @@ public class JSCExtScript {
             throw err
         }
     }
+
+    deinit {
+        print("deinit JSCExtScript")
+    }
 }
 
 @objc public protocol JSModuleLoaderDelegate {
