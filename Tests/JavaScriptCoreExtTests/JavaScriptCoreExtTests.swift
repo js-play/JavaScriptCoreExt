@@ -7,10 +7,6 @@ import exported from "file:///hello.js";
 
 export const test = "test";
 
-sleep(1000).then(() => {
-    print("sleep then");
-});
-
 print("test");
 print(exported);
 
@@ -46,14 +42,10 @@ throw new Error("test error");
 
 final class JavaScriptCoreExtTests: XCTestCase {
     func testExample() throws {
-        print("make vm")
         let vm = JSVirtualMachine()!
         let context = JSContext(virtualMachine: vm)!
 
-        print("create module loader")
         let loader = MyModuleLoader()
-        
-        print("set module loader")
         context.setModuleLoaderDelegate(loader)
 
         context.exceptionHandler = { context, value in
@@ -64,29 +56,7 @@ final class JavaScriptCoreExtTests: XCTestCase {
             {()->@convention(block) (JSValue)->Void in { print($0) }}(),
             forKeyedSubscript: "print" as NSString
         )
-
-        context.setObject(
-            {()->@convention(block) (JSValue)->JSValue in { a in
-                return JSValue(
-                    newPromiseIn: JSContext.current()!,
-                    fromExecutor: { resolve, reject in
-                        let ms = a.toInt32()
-                        print("sleep \(ms)ms")
-                        RunLoop.main.perform(
-                            inModes: [.default],
-                            block: {
-                                print("sleep begin")
-                                Thread.sleep(forTimeInterval: TimeInterval(ms) / 1000)
-                                print("sleep done")
-                            }
-                        )
-                    }
-                )
-            }}(),
-            forKeyedSubscript: "sleep" as NSString
-        )
         
-        print("evaluate script")
         let _ = context.evaluateScript("""
         import('file:///test.js').then((x) => {
             print('mod then')
@@ -98,9 +68,7 @@ final class JavaScriptCoreExtTests: XCTestCase {
         })
         """)!
         
-        print("run event loop")
         let out = RunLoop.main.run(mode: .default, before: .distantPast)
-
         print("runloop done \(out)")
     }
 }

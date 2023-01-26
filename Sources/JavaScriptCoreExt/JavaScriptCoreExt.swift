@@ -22,7 +22,6 @@ public class JSCExtScript {
         typealias Fn = @convention(c) (Any, Selector, Int64, NSString, NSURL, NSURL?, JSVirtualMachine, UnsafeMutablePointer<NSError?>) -> Any
         let fn = unsafeBitCast(imp, to: Fn.self)
         let outError = UnsafeMutablePointer<NSError?>.allocate(capacity: 1)
-        print("till here")
         inner = fn(
             cls,
             sel,
@@ -33,14 +32,9 @@ public class JSCExtScript {
             vm,
             outError
         )
-        print("does it work \(inner)")
         if inner == nil {
             throw outError.pointee!
         }
-    }
-
-    deinit {
-        print("deinit JSCExtScript")
     }
 }
 
