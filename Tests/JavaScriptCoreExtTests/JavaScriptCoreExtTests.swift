@@ -22,12 +22,12 @@ class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
         RunLoop.main.perform {
             print("fetchModuleForIdentifier: \(identifier!)")
             let script = try! JSCExtScript(
-                ofType: .module,
+                of: .module,
                 withSource: identifier.toString() == "file:///hello.js" ? "print('hello'); export default 'exported';" : SOURCE,
                 andSourceURL: URL(string: identifier.toString())!,
                 in: context.virtualMachine
             )
-            resolve.call(withArguments: [script.inner])
+            resolve.call(withArguments: [script])
         }
     }
 
@@ -46,7 +46,7 @@ final class JavaScriptCoreExtTests: XCTestCase {
         let context = JSContext(virtualMachine: vm)!
 
         let loader = MyModuleLoader()
-        context.setModuleLoaderDelegate(loader)
+        context.moduleLoaderDelegate = loader
 
         context.exceptionHandler = { context, value in
             print("JSError: \(value!)")

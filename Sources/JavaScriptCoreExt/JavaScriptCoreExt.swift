@@ -5,36 +5,33 @@ public enum JSScriptType: Int64 {
     case program, module
 }
 
-public class JSCExtScript {
-    public var inner: Any
-    
-    public init(
-        ofType type: JSScriptType,
+public func JSCExtScript(
+        of type: JSScriptType,
         withSource source: String,
         andSourceURL url: URL,
         in vm: JSVirtualMachine
-    ) throws {
-        let cls = objc_getClass("JSScript")!
-        let sel = Selector(("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:"))
-        let method = class_getClassMethod(cls as! AnyClass, sel)
-        let imp = method_getImplementation(method!)
-        typealias Fn = @convention(c) (Any, Selector, Int64, NSString, NSURL, NSURL?, JSVirtualMachine, UnsafeMutablePointer<NSError?>) -> Any
-        let fn = unsafeBitCast(imp, to: Fn.self)
-        let outError = UnsafeMutablePointer<NSError?>.allocate(capacity: 1)
-        inner = fn(
-            cls,
-            sel,
-            type.rawValue,
-            source as NSString,
-            url as NSURL,
-            nil,
-            vm,
-            outError
-        )
-        if inner == nil {
-            throw outError.pointee!
-        }
+) throws -> Any {
+    let cls = objc_getClass("JSScript")!
+    let sel = Selector(("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:"))
+    let method = class_getClassMethod(cls as! AnyClass, sel)
+    let imp = method_getImplementation(method!)
+    typealias Fn = @convention(c) (Any, Selector, Int64, NSString, NSURL, NSURL?, JSVirtualMachine, UnsafeMutablePointer<NSError?>) -> Any
+    let fn = unsafeBitCast(imp, to: Fn.self)
+    let outError = UnsafeMutablePointer<NSError?>.allocate(capacity: 1)
+    let result = fn(
+        cls,
+        sel,
+        type.rawValue,
+        source as NSString,
+        url as NSURL,
+        nil,
+        vm,
+        outError
+    )
+    if result == nil {
+        throw outError.pointee!
     }
+    return result
 }
 
 @objc public protocol JSModuleLoaderDelegate: NSObjectProtocol {
@@ -45,10 +42,15 @@ public class JSCExtScript {
 }
 
 public extension JSContext {
-    func setModuleLoaderDelegate(_ value: JSModuleLoaderDelegate) {
-        self.perform(Selector(("setModuleLoaderDelegate:")), with: value)
+    var moduleLoaderDelegate: JSModuleLoaderDelegate {
+        get {
+            return self.perform(Selector(("moduleLoaderDelegate"))).takeRetainedValue() as! JSModuleLoaderDelegate
+        }
+        set {
+            self.perform(Selector(("setModuleLoaderDelegate:")), with: value)
+        }
     }
-    
+
     func evaluateJSScript(_ script: JSCExtScript) -> JSValue {
         return self.perform(Selector(("evaluateJSScript:")), with: script.inner).takeRetainedValue() as! JSValue
     }
