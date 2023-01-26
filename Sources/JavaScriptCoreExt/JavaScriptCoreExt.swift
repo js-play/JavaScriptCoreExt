@@ -1,7 +1,7 @@
 import JavaScriptCore
 import Foundation
 
-public enum JSScriptType: Int32 {
+public enum JSScriptType: Int64 {
     case program, module
 }
 
@@ -19,7 +19,7 @@ public class JSCExtScript {
         let sel = Selector(("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:"))
         let method = class_getClassMethod(cls as! AnyClass, sel)
         let imp = method_getImplementation(method!)
-        typealias Fn = @convention(c) (Any, Selector, CInt, NSString, NSURL, Any?, Any, UnsafeMutablePointer<NSError?>) -> Any
+        typealias Fn = @convention(c) (Any, Selector, Int64, NSString, NSURL, NSURL?, JSVirtualMachine, UnsafeMutablePointer<NSError?>) -> Any
         let fn = unsafeBitCast(imp, to: Fn.self)
         let outError = UnsafeMutablePointer<NSError?>.allocate(capacity: 1)
         inner = fn(

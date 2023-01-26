@@ -31,7 +31,7 @@ throw new Error("test error");
                 andSourceURL: URL(string: identifier.toString())!,
                 in: context.virtualMachine
             )
-            // resolve.call(withArguments: [script.inner])
+            resolve.call(withArguments: [script.inner])
         }
     }
 
