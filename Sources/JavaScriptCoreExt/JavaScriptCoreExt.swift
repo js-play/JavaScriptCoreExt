@@ -52,6 +52,6 @@ public extension JSContext {
     }
 
     func evaluateJSScript(_ script: Any) -> JSValue {
-        return self.perform(Selector(("evaluateJSScript:")), with: script.inner).takeRetainedValue() as! JSValue
+        return self.perform(Selector(("evaluateJSScript:")), with: script).takeRetainedValue() as! JSValue
     }
 }
