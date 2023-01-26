@@ -22,6 +22,7 @@ throw new Error("test error");
 
 @objc class MyModuleLoader: NSObject, JSModuleLoaderDelegate {
     @objc func context(_ context: JSContext!, fetchModuleForIdentifier identifier: JSValue!, withResolveHandler resolve: JSValue!, andRejectHandler reject: JSValue!) {
+        RunLoop.current.perform {
             print("fetchModuleForIdentifier: \(identifier!)")
             let script = try! JSCExtScript(
                 ofType: .module,
@@ -32,6 +33,7 @@ throw new Error("test error");
             print("script: \(script.inner)")
             resolve.call(withArguments: [script.inner])
             print("resolved actually")
+        }
     }
 
     @objc func willEvaluateModule(_ key: URL?) {
@@ -69,7 +71,7 @@ throw new Error("test error");
                     fromExecutor: { resolve, reject in
                         let ms = a.toInt32()
                         print("sleep \(ms)ms")
-                        RunLoop.main.perform(
+                        RunLoop.current.perform(
                             inModes: [.default],
                             block: {
                                 print("sleep begin")
@@ -96,6 +98,6 @@ throw new Error("test error");
         """)!
         
         print("run event loop")
-        let out = RunLoop.main.run(mode: .default, before: .distantPast)
+        let out = RunLoop.current.run(mode: .default, before: .distantPast)
 
         print("runloop done \(out)")
