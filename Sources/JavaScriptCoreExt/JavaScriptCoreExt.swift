@@ -6,9 +6,9 @@ public enum JSScriptType: Int64 {
 }
 
 public class JSCExtScript {
-    var inner: Any
+    public var inner: Any
     
-    init(
+    public init(
         ofType type: JSScriptType,
         withSource source: String,
         andSourceURL url: URL,
