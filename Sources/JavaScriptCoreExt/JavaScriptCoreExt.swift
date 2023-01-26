@@ -1,9 +1,6 @@
 import JavaScriptCore
 import Foundation
 
-let handle = dlopen(nil, RTLD_LAZY)
-let msgSend = dlsym(handle, "objc_msgSend")
-
 public enum JSScriptType: Int32 {
     case program, module
 }
@@ -20,15 +17,17 @@ public class JSCExtScript {
         print("huh")
         let cls = objc_getClass("JSScript")!
         let sel = Selector(("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:"))
+        let method = class_getClassMethod(cls as! AnyClass, sel)
+        let imp = method_getImplementation(method!)
         typealias Fn = @convention(c) (Any, Selector, CInt, NSString, NSURL, Any?, Any, UnsafeMutablePointer<NSError?>) -> Any
-        let fn = unsafeBitCast(msgSend, to: Fn.self)
+        let fn = unsafeBitCast(imp, to: Fn.self)
         let outError = UnsafeMutablePointer<NSError?>.allocate(capacity: 1)
         inner = fn(
             cls,
             sel,
             type.rawValue,
-            NSString(string: source),
-            NSURL(string: url.absoluteString)!,
+            source as NSString,
+            url as NSURL,
             nil,
             vm,
             outError
@@ -51,7 +50,7 @@ public extension JSContext {
         self.perform(Selector(("setModuleLoaderDelegate:")), with: value)
     }
     
-    // func evaluateJSScript(_ script: JSCExtScript) -> JSValue {
-    //     return self.perform(Selector(("evaluateJSScript:")), with: script.inner).takeRetainedValue() as! JSValue
-    // }
+    func evaluateJSScript(_ script: JSCExtScript) -> JSValue {
+        return self.perform(Selector(("evaluateJSScript:")), with: script.inner).takeRetainedValue() as! JSValue
+    }
 }
