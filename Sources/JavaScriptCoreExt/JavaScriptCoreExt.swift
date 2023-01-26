@@ -34,7 +34,7 @@ public class JSCExtScript {
             outError
         )
         print("does it work \(inner)")
-        if inner != nil {
+        if inner == nil {
             throw outError.pointee!
         }
     }
