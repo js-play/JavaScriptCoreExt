@@ -13,9 +13,9 @@ public func JSCExtScript(
 ) throws -> Any {
     let cls = objc_getClass("JSScript")!
     let sel = Selector(("scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:"))
-    let method = class_getClassMethod(cls as! AnyClass, sel)
+    let method = class_getClassMethod((cls as! AnyClass), sel)
     let imp = method_getImplementation(method!)
-    typealias Fn = @convention(c) (Any, Selector, Int64, NSString, NSURL, NSURL?, JSVirtualMachine, UnsafeMutablePointer<NSError?>) -> Any
+    typealias Fn = @convention(c) (Any, Selector, Int64, NSString, NSURL, NSURL?, JSVirtualMachine, UnsafeMutablePointer<NSError?>) -> Any?
     let fn = unsafeBitCast(imp, to: Fn.self)
     let outError = UnsafeMutablePointer<NSError?>.allocate(capacity: 1)
     let result = fn(
@@ -31,7 +31,7 @@ public func JSCExtScript(
     if result == nil {
         throw outError.pointee!
     }
-    return result
+    return result!
 }
 
 @objc public protocol JSModuleLoaderDelegate: NSObjectProtocol {
@@ -46,12 +46,12 @@ public extension JSContext {
         get {
             return self.perform(Selector(("moduleLoaderDelegate"))).takeRetainedValue() as! JSModuleLoaderDelegate
         }
-        set {
-            self.perform(Selector(("setModuleLoaderDelegate:")), with: value)
+        set(loader) {
+            self.perform(Selector(("setModuleLoaderDelegate:")), with: loader)
         }
     }
 
-    func evaluateJSScript(_ script: JSCExtScript) -> JSValue {
+    func evaluateJSScript(_ script: Any) -> JSValue {
         return self.perform(Selector(("evaluateJSScript:")), with: script.inner).takeRetainedValue() as! JSValue
     }
 }
