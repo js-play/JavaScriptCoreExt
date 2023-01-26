@@ -34,9 +34,9 @@ public class JSCExtScript {
             outError
         )
         print("does it work \(inner)")
-        // if let err = outError.pointee {
-        //     throw err
-        // }
+        if inner != nil {
+            throw outError.pointee!
+        }
     }
 
     deinit {
