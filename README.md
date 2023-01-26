@@ -3,8 +3,8 @@
 Adds more functionality to the built-in JavaScriptCore framework by exposing some new APIs.
 
 - `JSModuleLoaderDelegate`
-- `JSScript`
-- New properties, methods in `JSContext`
+- `JSScript` (class is not bridged, only the initializer function is exposed as `JSCExtScript`)
+- `moduleLoaderDelegate` & `evaluateJSScript` in `JSContext`
 
 ## License
 
